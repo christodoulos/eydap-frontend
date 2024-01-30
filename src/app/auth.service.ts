@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -16,15 +17,23 @@ export class AuthService {
     this.socialAuthService.authState.subscribe((user) => {
       if (user) {
         const { idToken } = user;
-        // this.http
-        //   .post('http://localhost:3456/api/auth/google-login', {
-        //     idToken,
-        //   })
-        //   .subscribe((res) => {
-        //     console.log(res);
-        //   });
-        this.user.set(user);
-        this.isLoggedIn.set(true);
+        this.http
+          .post<{ accessToken: string }>(
+            `${environment.apiUrl}/auth/google-auth`,
+            {
+              idToken,
+            }
+          )
+          .subscribe({
+            next: (res) => {
+              this.user.set(user);
+              this.isLoggedIn.set(true);
+              localStorage.setItem('accessToken', res.accessToken);
+            },
+            error: (err) => {
+              console.log(err);
+            },
+          });
       }
     });
   }
