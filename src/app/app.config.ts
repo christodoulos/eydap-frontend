@@ -1,6 +1,5 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { JwtModule } from '@auth0/angular-jwt';
 
 import { routes } from './app.routes';
 import {
@@ -8,14 +7,11 @@ import {
   SocialAuthServiceConfig,
 } from '@abacritt/angularx-social-login';
 import {
+  HTTP_INTERCEPTORS,
   provideHttpClient,
   withInterceptorsFromDi,
 } from '@angular/common/http';
-import { environment } from '../environments/environment';
-
-export function tokenGetter() {
-  return localStorage.getItem('accessToken');
-}
+import { AuthInterceptorService } from './auth-interceptor.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,15 +33,11 @@ export const appConfig: ApplicationConfig = {
         },
       } as SocialAuthServiceConfig,
     },
-    importProvidersFrom(
-      JwtModule.forRoot({
-        config: {
-          tokenGetter,
-          allowedDomains: [environment.apiUrl],
-          //   disallowedRoutes: [`${environment.apiUrl}/auth`],
-        },
-      })
-    ),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true,
+    },
     provideHttpClient(withInterceptorsFromDi()),
   ],
 };
