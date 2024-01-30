@@ -1,0 +1,9 @@
+@if(!isLoggedIn()) {
+<asl-google-signin-button type="icon" shape="circle">
+</asl-google-signin-button>
+} @else { Welcome {{ user()?.name }}!
+<span style="cursor: pointer" (click)="signOut()">Logout</span>
+<div>
+  <a routerLink="/analysis">Analysis</a>
+</div>
+}

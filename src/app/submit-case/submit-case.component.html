@@ -1,0 +1,7 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <input type="file" (change)="onFileChange($event)" formControlName="file" />
+  <!-- Add other form fields as needed -->
+  <input type="text" formControlName="otherField" />
+
+  <button type="submit" [disabled]="!form.valid">Upload</button>
+</form>

@@ -1,12 +1,21 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { JwtModule } from '@auth0/angular-jwt';
 
 import { routes } from './app.routes';
 import {
   GoogleLoginProvider,
   SocialAuthServiceConfig,
 } from '@abacritt/angularx-social-login';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
+import { environment } from '../environments/environment';
+
+export function tokenGetter() {
+  return localStorage.getItem('accessToken');
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,6 +37,15 @@ export const appConfig: ApplicationConfig = {
         },
       } as SocialAuthServiceConfig,
     },
-    provideHttpClient(withFetch()),
+    importProvidersFrom(
+      JwtModule.forRoot({
+        config: {
+          tokenGetter,
+          allowedDomains: [environment.apiUrl],
+          //   disallowedRoutes: [`${environment.apiUrl}/auth`],
+        },
+      })
+    ),
+    provideHttpClient(withInterceptorsFromDi()),
   ],
 };
