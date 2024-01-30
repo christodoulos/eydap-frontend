@@ -42,5 +42,6 @@ export class AuthService {
     this.socialAuthService.signOut();
     this.user.set(null);
     this.isLoggedIn.set(false);
+    localStorage.removeItem('accessToken');
   }
 }
