@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "ng build && rsync -avz --delete dist/eydap-frontend/browser/* spyros@eydap-frontend.ddns.net:eydap-frontend"
   },
   "private": true,
   "dependencies": {
